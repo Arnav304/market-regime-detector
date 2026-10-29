@@ -1,7 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
-
+import matplotlib.pyplot as plt
+from sklearn.metrics import silhouette_score
 
 df = pd.read_csv("data/nifty50_features.csv")
 
@@ -81,3 +82,41 @@ print(pd.crosstab(
 ))
 
 
+inertia_values = []
+
+for k in range(2, 9):
+    model = KMeans(
+        n_clusters = k,
+        random_state = 42,
+        n_init = 10
+    )
+
+    model.fit(X_scaled)
+
+    inertia_values.append(model.inertia_)
+
+plt.plot(range(2, 9), inertia_values, marker="o")
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("Inertia")
+plt.title("Elbow Method for K-Means")
+plt.xticks(range(2, 9))
+plt.show()    
+
+
+
+
+
+
+for k in range(2, 9):
+    model = KMeans(
+        n_clusters=k,
+        random_state=42,
+        n_init=10
+    )
+
+    labels = model.fit_predict(X_scaled)
+
+    score = silhouette_score(X_scaled, labels)
+
+    print(f"K = {k}, Silhouette Score = {score:.4f}")
+ 
