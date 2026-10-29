@@ -119,4 +119,29 @@ for k in range(2, 9):
     score = silhouette_score(X_scaled, labels)
 
     print(f"K = {k}, Silhouette Score = {score:.4f}")
- 
+
+
+# Train a final candidate model with 4 clusters
+kmeans_4 = KMeans(
+    n_clusters=4,
+    random_state=42,
+    n_init=10
+)
+
+df["cluster_4"] = kmeans_4.fit_predict(X_scaled)
+
+# Examine the characteristics of each cluster
+summary_4 = df.groupby("cluster_4")[
+    ["momentum_20", "volatility_20", "drawdown"]
+].mean()
+
+print("\nCluster characteristics for K = 4:")
+print(summary_4)
+
+print("\nNumber of days per cluster:")
+print(df["cluster_4"].value_counts().sort_index())
+
+
+df.to_csv("data/nifty50_kmeans_regimes.csv", index=False)
+
+print("K-Means results saved successfully!")
